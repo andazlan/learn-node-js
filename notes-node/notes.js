@@ -1,19 +1,65 @@
 console.log('Starting notes.js');
 
+const fs = require('fs');
+
+var fetchNotes = () => {
+    if (fs.existsSync('notes-data.json')){
+        var notesString = fs.readFileSync('notes-data.json');
+        return JSON.parse(notesString);
+    }
+
+    return [];
+}
+
+var saveNotes = (notes) => {
+    fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+}
+
 var addNote = (title, body) => {
-    console.log("adding note", title, body);
+    var notes = fetchNotes();
+    var note = {
+        title,
+        body
+    };
+
+    var duplicateNotes = notes.filter((note) => note.title === title);
+
+    if (duplicateNotes.length === 0){
+        notes.push(note);
+        saveNotes(notes);
+
+        return note;
+    }
 }
 
 var getAll = () => {
-    console.log("Getting all notes");
+    return fetchNotes();
 }
 
 var getNote = (title) => {
-    console.log("Reading note ", title);
+    var notes = fetchNotes();
+    var filteredNotes = notes.filter((note) => note.title === title);
+    if (filteredNotes.length > 0){
+        return filteredNotes[0];
+    }
+    else{
+        return null;
+    }
 }
 
 var removeNote = (title) => {
-    console.log("Removing note ", title);
+    var notes = fetchNotes();
+    //Filter notes yang tidak sama dengan yang diminta
+    var filteredNotes = notes.filter((note) => note.title !== title);
+    saveNotes(filteredNotes);
+
+    return notes.length !== filteredNotes.length;
+}
+
+var logNote = (note) => {
+    console.log('---');
+    console.log('Title : ' + note.title);
+    console.log('Body : ' + note.body);
 }
 
 // Fungsi yang telah dibuat harus di export
@@ -21,7 +67,8 @@ module.exports = {
     addNote,
     getAll,
     getNote,
-    removeNote
+    removeNote,
+    logNote
 }
 
 //console.log(module);

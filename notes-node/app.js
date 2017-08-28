@@ -19,16 +19,32 @@ console.log("Process : ", process.argv);
 console.log("Yargs : ", argv);
 
 if (command === 'add'){
-    notes.addNote(argv.title, argv.body);
+    var note = notes.addNote(argv.title, argv.body);
+    if (note != null){
+        console.log("Note succesfully added");
+        notes.logNote(note);
+    }
+    else{
+        console.log("Duplicate item, title already exist");
+    }
 }
 else if (command === 'list'){
     notes.getAll();
 }
 else if (command === 'read'){
-    notes.getNote(argv.title);
+    var note = notes.getNote(argv.title);
+    if (note != null){
+        console.log("Here is your note");
+        notes.logNote(note);
+    }
+    else{
+        console.log("Duplicate item, title already exist");
+    }
 }
 else if (command === 'remove'){
-    notes.removeNote(argv.title);
+    var isNoteRemoved = notes.removeNote(argv.title);
+    var message = isNoteRemoved ? "Note was removed" : "Note not found";
+    console.log(message);
 }
 else{
     console.log("command not recognized");
